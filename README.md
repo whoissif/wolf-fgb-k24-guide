@@ -12,11 +12,20 @@ Sitio estático en español para estudiar la puesta en marcha, los parámetros H
 - Navegación del menú técnico, curva H54 y diagramas funcionales propios en SVG.
 - Diseño adaptable, impresión y despliegue automático en GitHub Pages.
 
-No necesita Node, compilación, servidor ni dependencias externas. El JavaScript, los estilos y los SVG están en este repositorio.
+No necesita Node, compilación, servidor ni dependencias externas. El JavaScript, los estilos, los SVG y las tipografías están en este repositorio.
+
+## Diseño de la interfaz
+
+La presentación sigue el lenguaje visual de [DeepSeek Harness](https://www.deepseek.com/harness/en/): fondo oscuro `#0a0a0a`, superficies de cristal translúcidas con desenfoque, azul de marca `#6799fe`, botones tipo píldora, tarjetas de 24 px y tipografías DM Sans (texto), Host Grotesk (títulos) y Fragment Mono (códigos y valores).
+
+- **Tema oscuro predeterminado y tema claro opcional** con el botón ☀/☾ de la cabecera. La elección se guarda en el navegador mediante `localStorage` y el icono indica siempre la acción disponible.
+- **Contraste verificado**: los 40 pares de texto/fondo de ambos temas superan el nivel AA de WCAG (mínimo 4,5:1 en texto pequeño).
+- **Impresión en blanco y negro sobre blanco**: al imprimir, los tokens de color se sustituyen por una paleta clara, se ocultan cabecera, botones y controles, y se muestran todas las secciones seguidas.
+- **Tipografías autoalojadas** en `assets/fonts/` (licencia OFL), de modo que el sitio funciona sin conexión y sin peticiones a terceros.
 
 ## Vista previa local
 
-Abre `index.html` directamente en un navegador. La foto de producto se sirve desde el CDN oficial de WOLF y necesita conexión a Internet; el resto del sitio funciona sin conexión.
+Abre `index.html` directamente en un navegador. Las tipografías, los estilos, los esquemas y el JavaScript se cargan desde el propio repositorio, así que el sitio completo funciona sin conexión. La única pieza externa es la fotografía de producto, que se sirve desde el CDN oficial de WOLF y necesita conexión: si no puede cargarse, el marco del inicio muestra automáticamente el esquema funcional local en lugar de una imagen rota.
 
 ## Publicar en GitHub Pages
 
@@ -34,8 +43,10 @@ Sitio publicado: https://whoissif.github.io/wolf-fgb-k24-guide/
 
 ```text
 index.html                 Interfaz y secciones
-styles.css                 Diseño adaptable e impresión
-src/app.js                 Navegación, filtros y estado de la lista
+styles.css                 Sistema de diseño: tokens de color, tema claro/oscuro, componentes, impresión
+assets/fonts/fonts.css     Tipografías autoalojadas (DM Sans, Host Grotesk, Fragment Mono)
+assets/fonts/*.woff2       Archivos de fuente servidos desde el repositorio
+src/app.js                 Navegación, filtros, estado de la lista, tema y respaldo de la foto
 src/data.js                Pasos y datos HG con referencias de página
 assets/*.svg               Diagramas explicativos originales
 .github/workflows/pages.yml Despliegue automático a Pages

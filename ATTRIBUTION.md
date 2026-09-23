@@ -20,7 +20,13 @@ Los textos de la interfaz son resúmenes didácticos, no una transcripción ínt
 
 ## Imagen de producto
 
-La imagen FGB(-K) se carga desde el sitio oficial de WOLF (CDN público): [página oficial de producto](https://www.wolf.eu/en-de/professional/heating-products/gas-boilers/gas-condensing-boiler-fgb-k). Se requiere conexión a Internet; la imagen no está incluida en el repositorio.
+La imagen FGB(-K) se carga desde el sitio oficial de WOLF (CDN público): [página oficial de producto](https://www.wolf.eu/en-de/professional/heating-products/gas-boilers/gas-condensing-boiler-fgb-k). Se requiere conexión a Internet; la imagen no está incluida en el repositorio. Cuando no puede cargarse, el inicio muestra el esquema funcional local como respaldo.
+
+## Tipografías y diseño
+
+Las tipografías DM Sans, Host Grotesk y Fragment Mono se distribuyen bajo la [SIL Open Font License 1.1](https://openfontlicense.org/) y se sirven desde `assets/fonts/` como archivos WOFF2 descargados de Google Fonts, sin peticiones a terceros en tiempo de ejecución.
+
+El lenguaje visual de la interfaz (paleta, superficies de cristal, radios, escala tipográfica y tratamiento de impresión) se inspira en el sitio de producto de [DeepSeek Harness](https://www.deepseek.com/harness/en/). Es una adaptación de estilo para este material didáctico: no reproduce su contenido, su código ni sus marcas, y no implica relación alguna con DeepSeek.
 
 ## GitHub Pages
 

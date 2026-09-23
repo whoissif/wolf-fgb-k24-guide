@@ -14,8 +14,39 @@
   document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', e => {e.preventDefault();openTab(b.dataset.tab)}));
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => openTab(b.dataset.go)));
   $('.nav-toggle').addEventListener('click', () => nav.classList.toggle('open'));
+
+  /* Tema oscuro (predeterminado) o claro: la elección se recuerda en este navegador */
+  const themeButton = $('.theme-toggle');
+  const themeMeta = $('#theme-color');
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const isLight = theme === 'light';
+    themeButton.textContent = isLight ? '☾' : '☀';
+    themeButton.setAttribute('aria-label', isLight ? 'Activar tema oscuro' : 'Activar tema claro');
+    themeButton.setAttribute('title', themeButton.getAttribute('aria-label'));
+    if (themeMeta) themeMeta.setAttribute('content', isLight ? '#f9f8f8' : '#0a0a0a');
+    try { localStorage.setItem('wolf-fgb-k24-theme', theme); } catch {}
+  }
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  themeButton.addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+
   const initial = location.hash.slice(1);
   if (['inicio','marcha','gas','hg','esquemas'].includes(initial)) openTab(initial);
+
+  /* Si la fotografía oficial no se puede cargar (sin conexión o abierto desde el
+     disco duro), el hueco se rellena con el esquema funcional local en lugar de
+     dejar un icono de imagen rota. */
+  const productPhoto = $('.product-photo img');
+  if (productPhoto) {
+    productPhoto.addEventListener('error', () => {
+      productPhoto.src = 'assets/system.svg';
+      productPhoto.classList.add('photo-fallback');
+      const caption = productPhoto.closest('figure')?.querySelector('figcaption');
+      if (caption) caption.textContent = 'La fotografía oficial necesita conexión; se muestra el esquema funcional del equipo incluido en esta guía.';
+    }, { once: true });
+  }
 
   const KEY = 'wolf-fgb-k24-project-v2';
   let saved = {};
