@@ -7,6 +7,8 @@ Sitio estático en español para estudiar la puesta en marcha, los parámetros H
 - Lista de puesta en marcha en ocho etapas, con casillas y notas guardadas localmente en el navegador.
 - Tabla interactiva de parámetros HG con búsqueda, filtro por combustible, valores de fábrica de 24 kW, unidades, límites, explicaciones y condiciones de visualización.
 - Valores de CO₂/O₂ y presión de conexión presentados por combustible, estado de medida y categoría del aparato.
+- Ruta formativa de tipo de gas/conversión con H12, requisitos de firmware y categorías de presión.
+- Hoja interactiva para registrar CO₂/O₂, separando ajuste con caldera abierta y análisis final cerrada, a cargas máxima y mínima. Las lecturas se guardan localmente en el navegador.
 - Navegación del menú técnico, curva H54 y diagramas funcionales propios en SVG.
 - Diseño adaptable, impresión y despliegue automático en GitHub Pages.
 
@@ -25,7 +27,8 @@ Abre `index.html` directamente en un navegador. La foto de producto se sirve des
 
 También puedes ejecutar el flujo desde **Actions → Deploy static site to GitHub Pages → Run workflow**.
 
-No he subido el proyecto a GitHub: este paquete queda preparado para que lo incorpores al repositorio que elijas.
+Repositorio: https://github.com/whoissif/wolf-fgb-k24-guide
+Sitio publicado: https://whoissif.github.io/wolf-fgb-k24-guide/
 
 ## Estructura
 

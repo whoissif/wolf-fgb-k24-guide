@@ -15,7 +15,7 @@
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => openTab(b.dataset.go)));
   $('.nav-toggle').addEventListener('click', () => nav.classList.toggle('open'));
   const initial = location.hash.slice(1);
-  if (['inicio','marcha','hg','esquemas'].includes(initial)) openTab(initial);
+  if (['inicio','marcha','gas','hg','esquemas'].includes(initial)) openTab(initial);
 
   const KEY = 'wolf-fgb-k24-project-v2';
   let saved = {};
@@ -46,6 +46,69 @@
     data.startup.forEach((_,i)=>{$(`#check-${i}`).checked=false;$(`#evidence-${i}`).value='';});
     saveSteps();
   });
+
+  const gasProfiles = {
+    eh:{name:'Gas natural E/H',h12:'5',note:'El manual indica que el equipo sale ajustado para gas natural E/H. Confirmar siempre la placa y presión de conexión. Si el aparato ya está configurado y la categoría coincide, no deducir que haga falta convertirlo.'},
+    ll:{name:'Gas natural LL',h12:'5',note:'El manual indica cambio de tipo de gas para gas natural LL. La conversión física debe realizarse con el obturador/piezas especificados por WOLF para la variante y siguiendo las figuras de la página 45; no extrapolar el color o la pieza de otro modelo.'},
+    lpg:{name:'Gas licuado P (GLP)',h12:'6',note:'El manual indica cambio de tipo de gas para GLP. La conversión física debe realizarse con las piezas aprobadas por WOLF y con la presión/categoría que marca la placa (en España hay variantes de 37 y 50 mbar).'}
+  };
+  function renderGasSummary(){
+    const profile=gasProfiles[$('#gas-target').value];
+    $('#gas-summary').innerHTML=`<span class="eyebrow">Selección de estudio · ${esc(profile.name)}</span><h2>FGB-K-24 · H12 de referencia ${esc(profile.h12)}</h2><p>${esc(profile.note)}</p><p><b>Firmware:</b> el manual requiere FW 4.30 para seleccionar la clase de potencia de 24 kW por H12. <b>Al cambiar H12:</b> H02–H04 se actualizan automáticamente según combustible/modelo.</p><button class="text-button" type="button" data-go="hg">Abrir explicación del parámetro H12 →</button> <a class="text-button" href="#gas-pressures" data-gas-pressure>Ver tabla de presión en esta guía ↓</a>`;
+    $('#gas-summary [data-go="hg"]').addEventListener('click',()=>openTab('hg'));
+    $('#gas-summary [data-gas-pressure]').addEventListener('click',e=>{e.preventDefault();openTab('esquemas');setTimeout(()=>document.querySelector('#gas-pressures')?.scrollIntoView({behavior:'smooth'}),0)});
+  }
+  $('#gas-target').addEventListener('change',renderGasSummary);
+  renderGasSummary();
+  $('.pressure-card').id='gas-pressures';
+
+  const combustionReference={
+    natural:[{condition:'Abierto · ajuste',load:'Máxima',co2:9.1,o2:4.5},{condition:'Abierto · ajuste',load:'Mínima',co2:8.9,o2:5.0},{condition:'Cerrado · análisis final',load:'Máxima',co2:9.3,o2:4.2},{condition:'Cerrado · análisis final',load:'Mínima',co2:9.1,o2:4.7}],
+    lpg:[{condition:'Abierto · ajuste',load:'Máxima',co2:10.2,o2:5.4},{condition:'Abierto · ajuste',load:'Mínima',co2:9.8,o2:6.0},{condition:'Cerrado · análisis final',load:'Máxima',co2:10.5,o2:4.9},{condition:'Cerrado · análisis final',load:'Mínima',co2:10.0,o2:5.7}]
+  };
+  const combustionKey='wolf-fgb-k24-combustion-v1';
+  let combustionSaved={};
+  try{combustionSaved=JSON.parse(localStorage.getItem(combustionKey)||'{}')}catch{}
+  const combustionFuel=$('#combustion-fuel');
+  combustionFuel.value=combustionSaved.fuel||'natural';
+  function renderCombustion(){
+    const fuel=combustionFuel.value;
+    const tbody=$('#combustion-table tbody');
+    tbody.innerHTML=combustionReference[fuel].map((row,i)=>{
+      const previous=combustionSaved.rows?.[`${fuel}-${i}`]||{};
+      return `<tr><td>${esc(row.condition)}</td><td>${esc(row.load)}</td><td>${row.co2.toFixed(1)} ±0,2</td><td>${row.o2.toFixed(1)} ±0,2</td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="CO₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="co2" value="${esc(previous.co2??'')}"></td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="O₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="o2" value="${esc(previous.o2??'')}"></td><td id="reading-status-${i}" aria-live="polite">Pendiente</td></tr>`;
+    }).join('');
+    tbody.querySelectorAll('input').forEach(input=>input.addEventListener('input',saveCombustion));
+    combustionSaved.fuel=fuel;
+    try{localStorage.setItem(combustionKey,JSON.stringify(combustionSaved))}catch{}
+    updateCombustionStatuses();
+  }
+  function updateCombustionStatuses(){
+    const fuel=combustionFuel.value;
+    combustionReference[fuel].forEach((row,i)=>{
+      const co2Input=$(`[data-gas-row="${fuel}-${i}"][data-kind="co2"]`);
+      const o2Input=$(`[data-gas-row="${fuel}-${i}"][data-kind="o2"]`);
+      const co2=Number(co2Input?.value),o2=Number(o2Input?.value);
+      const status=$(`#reading-status-${i}`);
+      if(!co2Input?.value||!o2Input?.value||!Number.isFinite(co2)||!Number.isFinite(o2)){status.textContent='Pendiente';status.className='';return;}
+      const ok=Math.abs(co2-row.co2)<=0.200001&&Math.abs(o2-row.o2)<=0.200001;
+      status.textContent=ok?'Dentro de tolerancia de referencia':'Fuera de tolerancia: revisar';
+      status.className=ok?'reading-ok':'reading-out';
+    });
+  }
+  function saveCombustion(){
+    combustionSaved.fuel=combustionFuel.value;
+    combustionSaved.rows=combustionSaved.rows||{};
+    document.querySelectorAll('[data-gas-row]').forEach(input=>{
+      const row=combustionSaved.rows[input.dataset.gasRow]||{};
+      row[input.dataset.kind]=input.value;
+      combustionSaved.rows[input.dataset.gasRow]=row;
+    });
+    try{localStorage.setItem(combustionKey,JSON.stringify(combustionSaved))}catch{}
+    updateCombustionStatuses();
+  }
+  combustionFuel.addEventListener('change',renderCombustion);
+  renderCombustion();
 
   const groupNames = {startup:'Puesta en marcha',heating:'Calefacción',dhw:'ACS / acumulador',service:'Instalación / servicio'};
   const results = $('#hg-results');
