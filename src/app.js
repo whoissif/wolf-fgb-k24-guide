@@ -76,7 +76,7 @@
     const tbody=$('#combustion-table tbody');
     tbody.innerHTML=combustionReference[fuel].map((row,i)=>{
       const previous=combustionSaved.rows?.[`${fuel}-${i}`]||{};
-      return `<tr><td>${esc(row.condition)}</td><td>${esc(row.load)}</td><td>${row.co2.toFixed(1)} ±0,2</td><td>${row.o2.toFixed(1)} ±0,2</td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="CO₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="co2" value="${esc(previous.co2??'')}"></td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="O₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="o2" value="${esc(previous.o2??'')}"></td><td id="reading-status-${i}" aria-live="polite">Pendiente</td></tr>`;
+      return `<tr><td>${esc(row.condition)}</td><td>${esc(row.load)}</td><td>${row.co2.toFixed(1)} ±0,2</td><td>${row.o2.toFixed(1)} ±0,3</td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="CO₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="co2" value="${esc(previous.co2??'')}"></td><td><input class="reading-input" type="number" min="0" max="20" step="0.1" inputmode="decimal" aria-label="O₂ medido ${esc(row.condition)}, ${esc(row.load)}" data-gas-row="${fuel}-${i}" data-kind="o2" value="${esc(previous.o2??'')}"></td><td id="reading-status-${i}" aria-live="polite">Pendiente</td></tr>`;
     }).join('');
     tbody.querySelectorAll('input').forEach(input=>input.addEventListener('input',saveCombustion));
     combustionSaved.fuel=fuel;
@@ -91,7 +91,7 @@
       const co2=Number(co2Input?.value),o2=Number(o2Input?.value);
       const status=$(`#reading-status-${i}`);
       if(!co2Input?.value||!o2Input?.value||!Number.isFinite(co2)||!Number.isFinite(o2)){status.textContent='Pendiente';status.className='';return;}
-      const ok=Math.abs(co2-row.co2)<=0.200001&&Math.abs(o2-row.o2)<=0.200001;
+      const ok=Math.abs(co2-row.co2)<=0.200001&&Math.abs(o2-row.o2)<=0.300001;
       status.textContent=ok?'Dentro de tolerancia de referencia':'Fuera de tolerancia: revisar';
       status.className=ok?'reading-ok':'reading-out';
     });
