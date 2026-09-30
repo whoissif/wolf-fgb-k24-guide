@@ -27,15 +27,6 @@ La presentación sigue el lenguaje visual de [DeepSeek Harness](https://www.deep
 
 Abre `index.html` directamente en un navegador. Las tipografías, los estilos, los esquemas y el JavaScript se cargan desde el propio repositorio, así que el sitio completo funciona sin conexión. La única pieza externa es la fotografía de producto, que se sirve desde el CDN oficial de WOLF y necesita conexión: si no puede cargarse, el marco del inicio muestra automáticamente el esquema funcional local en lugar de una imagen rota.
 
-## Publicar en GitHub Pages
-
-1. Crea un repositorio GitHub vacío y copia en su raíz el contenido de esta carpeta, incluida `.github/workflows/pages.yml`.
-2. Usa `main` como rama predeterminada (el flujo de despliegue escucha `main`).
-3. En **Settings → Pages**, selecciona **GitHub Actions** como fuente de publicación.
-4. Sube los cambios a `main`. La acción **Deploy static site to GitHub Pages** publicará el sitio; el enlace aparece en el resumen del job y en el entorno `github-pages`.
-
-También puedes ejecutar el flujo desde **Actions → Deploy static site to GitHub Pages → Run workflow**.
-
 Repositorio: https://github.com/whoissif/wolf-fgb-k24-guide
 Sitio publicado: https://whoissif.github.io/wolf-fgb-k24-guide/
 
